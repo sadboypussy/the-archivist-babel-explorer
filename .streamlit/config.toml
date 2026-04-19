@@ -15,3 +15,5 @@ gatherUsageStats = false
 # Priorité plus forte : variable d’environnement STREAMLIT_SERVER_HEADLESS=true
 # (voir Launch-Archivist-UI-headless.bat, ou ARCHIVIST_STREAMLIT_HEADLESS=1 / .streamlit/headless.flag).
 headless = false
+# Pas d’invite « Welcome to Streamlit! / Email: » dans la console au premier lancement
+showEmailPrompt = false
