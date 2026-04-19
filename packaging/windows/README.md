@@ -37,6 +37,6 @@ Expect **hundreds of MB** (Python + llama-cpp-python CPU wheel + deps). GGUF is 
 
 ## Inno Setup (consumer installer skeleton)
 
-See **`Archivist.iss`** in this folder. Compile with [Inno Setup](https://jrsoftware.org/isinfo.php) after preparing `#define MyAppSource` (payload with `Launch-Archivist-UI.bat` or equivalent calling `streamlit run …`). §5.5 of the design doc defines the target product channel.
+See **`Archivist.iss`** in this folder. Compile with [Inno Setup](https://jrsoftware.org/isinfo.php) after preparing `#define MyAppSource` (payload with `Launch-Archivist-UI.bat` or equivalent calling `streamlit run …`). Pour une machine sans affichage interactif, le dépôt fournit aussi **`Launch-Archivist-UI-headless.bat`**. §5.5 of the design doc defines the target product channel.
 
 **Payload Streamlit / galerie :** inclure un `pip install` couvrant **`requirements-app.txt`** (contient `streamlit` et `firebase-admin`). Pour la publication Firestore, l’utilisateur (ou l’installeur) place le JSON sous **`config/firebase-service-account.json`** — voir `config/firebase-service-account.README.txt` à la racine du dépôt (fichier sensible, non versionné).

@@ -11,6 +11,8 @@ dist/
 .archivist_scan_status.json
 .archivist_scan_pause
 .streamlit/secrets.toml
+# Mode Streamlit headless local (optionnel, voir Launch-Archivist-UI.bat)
+.streamlit/headless.flag
 **/firebase-adminsdk*.json
 **/*firebase-adminsdk*.json
 archivist-firebase*.json

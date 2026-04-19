@@ -60,3 +60,5 @@ Workflow GitHub **`.github/workflows/ci.yml`** : Windows, Python 3.11, `pip inst
 ## Pour les contributeurs (aujourd’hui)
 
 Clone + `python -m venv .venv` (recommandé, évite les conflits pip avec d’autres apps sur la machine) + activer le venv + `pip install -r requirements.txt -r requirements-llm.txt -r requirements-app.txt` + `python scripts/first_run.py` + double-clic **`Launch-Archivist-UI.bat`** (ou `streamlit run archivist_app.py` si Python est sur le PATH) = flux **développeur / bêta**. Le public cible **ne verra pas** ce flux en v1 (installeur unique).
+
+**Streamlit sans ouverture du navigateur** (serveur / CI / SSH) : **`Launch-Archivist-UI-headless.bat`**, ou **`ARCHIVIST_STREAMLIT_HEADLESS=1`** avant le `.bat` normal, ou fichier vide **`.streamlit/headless.flag`** (non versionné).

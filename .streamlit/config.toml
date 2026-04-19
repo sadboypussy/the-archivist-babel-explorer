@@ -6,5 +6,12 @@ secondaryBackgroundColor = "#14141a"
 textColor = "#eeebe6"
 font = "sans serif"
 
+[browser]
+# Plus de message « Collecting usage statistics… » au lancement
+gatherUsageStats = false
+
 [server]
-headless = true
+# false = ouverture automatique du navigateur (Launch-Archivist-UI.bat).
+# Priorité plus forte : variable d’environnement STREAMLIT_SERVER_HEADLESS=true
+# (voir Launch-Archivist-UI-headless.bat, ou ARCHIVIST_STREAMLIT_HEADLESS=1 / .streamlit/headless.flag).
+headless = false
