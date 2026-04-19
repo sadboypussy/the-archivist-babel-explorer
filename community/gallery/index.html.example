@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Archivist — Galerie communautaire</title>
+  <style>
+    :root { color-scheme: dark; --bg: #121218; --fg: #e8e6e3; --muted: #8a8794; --accent: #c9a227; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); margin: 0; padding: 1.25rem; line-height: 1.45; }
+    h1 { font-weight: 600; font-size: 1.35rem; margin: 0 0 0.5rem; }
+    p.sub { color: var(--muted); font-size: 0.9rem; margin: 0 0 1.5rem; }
+    .card { border: 1px solid #2a2a34; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #1a1a22; }
+    .tier { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
+    .coord { font-family: ui-monospace, monospace; font-size: 0.75rem; color: var(--muted); word-break: break-all; }
+    .frag { margin-top: 0.6rem; white-space: pre-wrap; font-size: 0.9rem; }
+    .err { color: #e07070; }
+  </style>
+</head>
+<body>
+  <h1>Galerie communautaire</h1>
+  <p class="sub">Artefacts publiés depuis l’app The Archivist (Firestore). <strong>La console Firebase affiche souvent l’onglet « npm »</strong> : ignorez <code>npm install</code> et les <code>import</code> — pour cette page statique, <strong>copiez seulement l’objet JavaScript <code>firebaseConfig = { … }</code></strong> (les mêmes clés que sur l’écran) et collez-le dans le <code>const firebaseConfig</code> ci-dessous. Si la console propose un onglet <strong>CDN</strong>, vous pouvez aussi le lire : l’objet de config est le même. Ensuite enregistrez une copie sous le nom <code>index.html</code> à côté de ce fichier (voir <code>DEPLOY.txt</code>) : c’est ce fichier-là qui contient en général votre vraie config et n’est pas versionné dans Git.</p>
+  <div id="status">Chargement…</div>
+  <div id="list"></div>
+
+  <!-- Firebase compat (pas de build npm) — versions vues sur https://firebase.google.com/docs/web/setup -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script>
+    // Remplacez tout l’objet ci-dessous par celui affiché dans la console (onglet npm ou « Config »).
+    // Exemple de champs : apiKey, authDomain, projectId, storageBucket (souvent *.firebasestorage.app ou *.appspot.com),
+    // messagingSenderId, appId. measurementId (Analytics) est optionnel ici — vous pouvez l’ajouter ou l’omettre.
+    const firebaseConfig = {
+      apiKey: "COLLEZ_VOTRE_apiKey",
+      authDomain: "COLLEZ_VOTRE_projectId.firebaseapp.com",
+      projectId: "COLLEZ_VOTRE_projectId",
+      storageBucket: "COLLEZ_VOTRE_storageBucket",
+      messagingSenderId: "COLLEZ_VOTRE_messagingSenderId",
+      appId: "COLLEZ_VOTRE_appId"
+    };
+    const COLLECTION = "artefacts"; // identique à ARCHIVIST_FIRESTORE_COLLECTION si vous l’avez changée
+
+    const statusEl = document.getElementById("status");
+    const listEl = document.getElementById("list");
+
+    function fail(msg) {
+      statusEl.innerHTML = '<p class="err">' + msg + "</p>";
+    }
+
+    if (!firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf("COLLEZ") === 0) {
+      fail("Remplissez <code>firebaseConfig</code> dans le HTML (voir commentaires en tête du fichier).");
+    } else {
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      db.collection(COLLECTION)
+        .limit(120)
+        .get()
+        .then((snap) => {
+          const rows = [];
+          snap.forEach((doc) => rows.push({ id: doc.id, ...doc.data() }));
+          rows.sort((a, b) => String(b.discovered_at || "").localeCompare(String(a.discovered_at || "")));
+          statusEl.innerHTML = "<p>" + rows.length + " entrée(s) affichée(s).</p>";
+          listEl.innerHTML = rows
+            .map((r) => {
+              const tier = (r.rarity_display_name || r.rarity_rank || "?") + "";
+              const title = (r.archivist_title || "").trim() || "—";
+              return (
+                '<article class="card"><div class="tier">' +
+                escapeHtml(tier) +
+                "</div><h2 style=\"margin:0.35rem 0 0;font-size:1rem;font-weight:500\">" +
+                escapeHtml(title) +
+                '</h2><div class="coord">' +
+                escapeHtml(r.coordinates || "") +
+                '</div><div class="frag">' +
+                escapeHtml((r.fragment || "").slice(0, 3500)) +
+                "</div></article>"
+              );
+            })
+            .join("");
+        })
+        .catch((e) => {
+          fail("Firestore : " + e.message + " — vérifiez les règles (lecture <code>artefacts</code>) et le nom de collection.");
+        });
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Phase 4 — galerie Firestore (redondant avec requirements-app.txt depuis v1 flux unique).
+# Conservé pour les anciennes instructions / installs partiels :
+#   pip install -r requirements-community.txt
+#
+# JSON compte de service : voir config/firebase-service-account.README.txt
+# Variable optionnelle : ARCHIVIST_FIREBASE_CREDENTIALS (sinon config/firebase-service-account.json).
+
+firebase-admin>=6.5.0

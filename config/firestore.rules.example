@@ -1,0 +1,15 @@
+// Example Firestore rules for the **public gallery** (browser, JS SDK).
+// Writes from ``archivist_publish.py`` use the **Admin SDK** with a service account:
+// those requests **bypass** these rules. Sanitisation is enforced in Python instead.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /artefacts/{docId} {
+      // Gallery page: read published artefacts
+      allow read: if true;
+      // No direct browser writes in this template (adjust if you add Auth + App Check)
+      allow write: if false;
+    }
+  }
+}

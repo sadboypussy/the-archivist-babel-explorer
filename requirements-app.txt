@@ -1,0 +1,8 @@
+# Phase 3 — local UI (Streamlit). Install alongside base + LLM deps:
+#   pip install -r requirements.txt -r requirements-llm.txt -r requirements-app.txt
+#
+# firebase-admin : publication galerie Firestore (léger). Sans JSON dans config/
+#   le bouton Publier reste masqué ; pas de compte Firebase requis pour le reste de l’app.
+
+streamlit>=1.28.0
+firebase-admin>=6.5.0

@@ -1,0 +1,8 @@
+# Phase 2 — local Archivist (weights: see models/README.txt + scripts/download_model.py).
+# Plain `pip install llama-cpp-python` often pulls a **CPU** wheel on Windows.
+# NVIDIA + CUDA: run `python scripts/install_llama_cuda_windows.py` (detects GPU SM + toolkit, pip installs a matching wheel).
+# If native import still fails at runtime, use llama-server / LM Studio (CUDA) and `ARCHIVIST_LLAMA_SERVER` / `--llama-server`.
+
+llama-cpp-python>=0.2.55
+langdetect>=1.0.9
+huggingface_hub>=0.20.0

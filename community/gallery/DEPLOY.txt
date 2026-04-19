@@ -1,0 +1,97 @@
+Galerie communautaire — déploiement (guide pas à pas)
+======================================================
+
+Prérequis (déjà faits chez vous si la page locale fonctionne)
+--------------------------------------------------------------
+• Firestore créé + règles de lecture sur la collection « artefacts »
+  (voir ../../config/firestore.rules.example puis coller / Publier dans la console).
+• Fichier HTML avec votre firebaseConfig : community/gallery/index.html
+  (copie de index.html.example avec le bloc const firebaseConfig rempli.)
+• index.html est ignoré par Git dans community/gallery/ et docs/gallery/ :
+  évite d’enregistrer la config Web dans l’historique par erreur.
+
+
+4.1 — Netlify Drop (le plus simple, sans Git)
+---------------------------------------------
+But : obtenir une adresse du type https://un-nom.netlify.app
+
+1. Ouvrez votre navigateur sur : https://app.netlify.com/drop
+   (créez un compte gratuit si demandé.)
+
+2. Ouvrez l’Explorateur Windows et allez dans le dossier :
+
+   …\Babel explorer\community\gallery\
+
+3. Glissez-déposez **tout le dossier « gallery »** (ou son contenu : au minimum
+   index.html + éventuellement ce fichier DEPLOY.txt) dans la zone prévue sur Netlify.
+
+4. Attendez la fin du traitement : Netlify affiche une **URL** en vert.
+   Cliquez dessus : vous devez voir la même galerie qu’en local (liste ou « 0 entrée »).
+
+5. Vous pouvez renommer le site dans Netlify : Site settings → Change site name.
+
+Note : chaque nouveau « drop » peut créer un **nouveau** site. Pour mettre à jour
+sans changer d’URL, utilisez l’interface Netlify « Deploys » → glisser un nouveau
+fichier/dossier, ou reliez le dépôt Git (plus avancé).
+
+
+4.2 — GitHub Pages (même dépôt que le code)
+--------------------------------------------
+But : héberger la galerie sur GitHub, sans payer, avec une URL du type :
+
+  https://VOTRE_USER.github.io/NOM_DU_REPO/gallery/
+
+Étape A — Copier le HTML au bon endroit dans le projet
+
+1. Dans votre clone du dépôt, copiez le fichier :
+
+   community\gallery\index.html   →   docs\gallery\index.html
+
+   (Créez le dossier docs\gallery s’il n’existe pas ; le dépôt contient déjà
+   docs\.nojekyll et ce README pour Pages.)
+
+2. Le fichier docs/gallery/index.html est dans .gitignore : Git ne le voit pas
+   tant que vous ne forcez pas l’ajout.
+
+Étape B — Pousser la page une fois sur GitHub
+
+1. Ouvrez un terminal **dans la racine du dépôt** (dossier Babel explorer).
+
+2. Commandes (copier-coller une par une) :
+
+   git add -f docs/gallery/index.html
+   git add docs/.nojekyll docs/gallery/README.txt
+   git status
+   git commit -m "GitHub Pages: galerie Firestore"
+   git push
+
+Étape C — Activer Pages dans l’interface GitHub
+
+1. Sur github.com, ouvrez **votre dépôt** (celui qui contient ce code).
+
+2. Onglet **Settings** (Paramètres).
+
+3. Menu gauche : **Pages**.
+
+4. Section « Build and deployment » / « Source » :
+   • Source : **Deploy from a branch**
+   • Branch : **main** (ou la branche où vous poussez le code)
+   • Folder : **/docs** (pas « / (root) »)
+
+5. Enregistrez. Attendez 1 à 3 minutes : GitHub affiche l’URL du site en haut
+   de la page Pages (souvent en vert).
+
+6. Ouvrez dans le navigateur :
+
+   https://VOTRE_USER.github.io/NOM_DU_REPO/gallery/
+
+   (Si 404 : vérifiez que docs/gallery/index.html est bien sur la branche :
+   bouton « main » sur GitHub → dossier docs → gallery → index.html.)
+
+
+Rappels utiles
+--------------
+• La config **Web** (dans le HTML) sert à **lire** Firestore depuis le navigateur.
+• La publication depuis l’app The Archivist utilise le **JSON compte de service**
+  (config/firebase-service-account.json ou ARCHIVIST_FIREBASE_CREDENTIALS) :
+  même projet Firebase, autre fichier.

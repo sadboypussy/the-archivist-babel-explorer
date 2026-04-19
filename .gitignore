@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+archivist_log.json
+_tmp_scan_log.json
+_tmp_llm_log.json
+models/*.gguf
+dist/
+.explorer_pseudo.txt
+.archivist_scan_status.json
+.archivist_scan_pause
+.streamlit/secrets.toml
+**/firebase-adminsdk*.json
+**/*firebase-adminsdk*.json
+archivist-firebase*.json
+# Compte de service (copie locale — ne jamais committer)
+config/firebase-service-account.json
+# Galerie : config Web Firebase (copie locale depuis index.html.example)
+community/gallery/index.html
+docs/gallery/index.html
