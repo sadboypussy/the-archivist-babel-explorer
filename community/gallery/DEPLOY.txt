@@ -1,6 +1,10 @@
 Galerie communautaire — déploiement (guide pas à pas)
 ======================================================
 
+Quelle URL afficher au public ?
+-------------------------------
+Voir **PUBLIC_GALLERY.txt** dans ce même dossier : **Netlify = canon**, GitHub Pages = miroir.
+
 Prérequis (déjà faits chez vous si la page locale fonctionne)
 --------------------------------------------------------------
 • Firestore créé + règles de lecture sur la collection « artefacts »

@@ -12,7 +12,7 @@ La **vérité produit** pour la première release publique est dans **`THE_ARCHI
 - **Plateforme** : **Windows uniquement** pour la v1.
 - **Inférence** : **locale** uniquement ; un **binaire CUDA** embarqué et lancé en tâche de fond (ex. `llama-server`) est **validé** s’il est installé **avec** l’app et **invisible** pour l’utilisateur (cf. design §5.5).
 - **Qualité** : **8B Q4_K_M seul** pour la v1 — **pas de variante 3B** ; CPU toléré **avec message clair** si pas de NVIDIA, **sans** dégrader les fonctionnalités.
-- **Communauté** : galerie **en ligne** (Firebase + GitHub Pages) — **normal** et **hors du disque local** ; le cœur scan + Archiviste reste **local**.
+- **Communauté** : galerie **en ligne** (Firebase + page statique hébergée) — **normal** et **hors du disque local** ; le cœur scan + Archiviste reste **local**. **URL canonique à partager** (Netlify) + miroir Pages : voir **`community/gallery/PUBLIC_GALLERY.txt`**.
 - **Signature de code** : **souhaitable** pour limiter SmartScreen ; **coût** à la charge de l’auteur si / quand c’est acceptable — sinon prévoir l’étape « éditeur inconnu » dans le support utilisateur.
 
 ---
@@ -28,7 +28,7 @@ La **vérité produit** pour la première release publique est dans **`THE_ARCHI
 | **UI locale** (`archivist_app.py` + `requirements-app.txt` + `Launch-Archivist-UI.bat`) | **Première version** (Briefing, Scanner, Découvertes, Système) — à polir §6 |
 | **Installateur Windows** | Squelette **Inno Setup** `packaging/windows/Archivist.iss` — **pas** le flux build/payload final |
 | Téléchargement modèle **intégré au setup graphique** | **Pas encore** (aujourd’hui : script / first_run) |
-| Galerie Firebase + Pages | **HTML + Firestore** prêts ; déploiement pas à pas : **`community/gallery/DEPLOY.txt`** (§ 4.1 Netlify, § 4.2 GitHub Pages + dossier **`docs/gallery/`**) |
+| Galerie Firebase + Pages | **HTML + Firestore** prêts ; déploiement : **`community/gallery/DEPLOY.txt`** ; **lien public canon** : **`community/gallery/PUBLIC_GALLERY.txt`** |
 
 ---
 

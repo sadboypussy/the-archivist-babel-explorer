@@ -1,0 +1,18 @@
+Galerie publique — URL à partager (ce dépôt)
+============================================
+
+URL canonique (recommandée pour la communication)
+------------------------------------------------
+https://venerable-dango-f3a334.netlify.app/
+
+Pourquoi Netlify en premier : URL courte, indépendante du nom du dépôt GitHub,
+simple à recopier pour un public non technique.
+
+Miroir (même page, même Firestore)
+---------------------------------
+https://sadboypussy.github.io/the-archivist-babel-explorer/gallery/
+
+GitHub Pages reste utile si Netlify change ou pour ceux qui ne veulent qu’un
+hébergeur lié au dépôt.
+
+Si tu changes d’URL Netlify ou de nom de dépôt, mets ce fichier à jour.
