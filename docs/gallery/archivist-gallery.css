@@ -1,0 +1,361 @@
+/* The Archivist — galerie web statique (alignée sur archivist_ui_theme.py) */
+
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&display=swap");
+
+:root {
+  --archivist-mx: 0;
+  --archivist-my: 0;
+  --archivist-fg: rgba(238, 235, 230, 0.96);
+  --archivist-muted: rgba(160, 156, 148, 0.9);
+  --archivist-glass: rgba(255, 252, 248, 0.055);
+  --archivist-glass-edge: rgba(255, 255, 255, 0.1);
+  --archivist-solid: rgba(14, 14, 18, 0.94);
+  --archivist-breathe: 14s;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--archivist-fg);
+  background:
+    radial-gradient(120% 80% at 10% 0%, rgba(201, 162, 39, 0.07) 0%, transparent 55%),
+    radial-gradient(90% 70% at 100% 30%, rgba(120, 140, 190, 0.06) 0%, transparent 50%),
+    linear-gradient(165deg, #0a0a0d 0%, #121018 45%, #0c0c10 100%);
+}
+
+.archivist-wrap {
+  position: relative;
+  z-index: 2;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  padding-bottom: 4rem;
+}
+
+.archivist-lede {
+  background: var(--archivist-glass);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  border: 1px solid var(--archivist-glass-edge);
+  border-radius: 18px;
+  padding: 1.25rem 1.35rem;
+  margin-bottom: 1.75rem;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+h1 {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.85rem, 4vw, 2.45rem);
+  letter-spacing: 0.03em;
+  margin: 0 0 0.35rem;
+}
+
+p.sub {
+  margin: 0;
+  color: var(--archivist-muted);
+  font-size: 0.9rem;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+}
+
+p.sub code {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.82em;
+  padding: 0.12em 0.35em;
+  border-radius: 6px;
+  background: var(--archivist-solid);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+#status {
+  font-size: 0.88rem;
+  color: var(--archivist-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+#status p {
+  margin: 0;
+}
+
+.card {
+  background: var(--archivist-glass);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid var(--archivist-glass-edge);
+  border-radius: 16px;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow:
+    0 16px 44px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+.card h2 {
+  font-family: "Manrope", system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1.05rem;
+  margin: 0.4rem 0 0;
+  color: var(--archivist-fg);
+}
+
+.tier {
+  color: rgba(201, 162, 39, 0.95);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.coord {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.75rem;
+  color: var(--archivist-muted);
+  word-break: break-all;
+  margin-top: 0.45rem;
+}
+
+.frag {
+  margin-top: 0.75rem;
+  white-space: pre-wrap;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--archivist-solid);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.err {
+  color: #e8a0a0;
+}
+
+/* Palmarès (même page que la galerie — agrégation côté navigateur) */
+.section-title {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+  margin: 2rem 0 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--archivist-fg);
+}
+
+.archivist-lb {
+  background: var(--archivist-glass);
+  backdrop-filter: blur(14px) saturate(1.15);
+  -webkit-backdrop-filter: blur(14px) saturate(1.15);
+  border: 1px solid var(--archivist-glass-edge);
+  border-radius: 16px;
+  padding: 1.1rem 1.2rem 1.25rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.22);
+}
+
+.lb-heading {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin: 0 0 0.75rem;
+  color: rgba(201, 162, 39, 0.95);
+}
+
+.lb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lb-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.lb-list li:last-child {
+  border-bottom: none;
+}
+
+.lb-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.65rem;
+}
+
+.lb-rank {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  color: var(--archivist-muted);
+  min-width: 1.75rem;
+}
+
+.lb-name {
+  font-weight: 600;
+  color: var(--archivist-fg);
+}
+
+.lb-pts {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.82rem;
+  color: rgba(201, 162, 39, 0.95);
+}
+
+.lb-meta {
+  width: 100%;
+  font-size: 0.78rem;
+  color: var(--archivist-muted);
+  padding-left: 2.1rem;
+}
+
+.card-pts {
+  font-size: 0.78rem;
+  color: rgba(201, 162, 39, 0.9);
+  margin-top: 0.35rem;
+  letter-spacing: 0.04em;
+}
+
+/* --- Calque ambiance (identique au thème Streamlit) --- */
+.archivist-ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.archivist-grid {
+  position: absolute;
+  inset: -20%;
+  opacity: 0.07;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform:
+    translate3d(calc(var(--archivist-mx, 0) * 18px), calc(var(--archivist-my, 0) * 12px), 0)
+    rotate(-4deg);
+  animation: archivist-grid-breathe var(--archivist-breathe) ease-in-out infinite;
+}
+
+@keyframes archivist-grid-breathe {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.09; }
+}
+
+.archivist-shape {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  will-change: transform, opacity;
+}
+
+.archivist-shape--1 {
+  width: min(42vw, 520px);
+  height: min(42vw, 520px);
+  top: -12%;
+  right: -8%;
+  border-radius: 37% 63% 42% 58% / 45% 38% 62% 55%;
+  opacity: 0.35;
+  transform:
+    translate3d(calc(var(--archivist-mx, 0) * 32px), calc(var(--archivist-my, 0) * -24px), 0)
+    rotate(calc(12deg + var(--archivist-mx, 0) * 8deg));
+  animation: archivist-morph-a 18s ease-in-out infinite, archivist-fade-a 22s ease-in-out infinite;
+}
+
+.archivist-shape--2 {
+  width: 180px;
+  height: 180px;
+  bottom: 12%;
+  left: 4%;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  opacity: 0.22;
+  transform:
+    translate3d(calc(var(--archivist-mx, 0) * -20px), calc(var(--archivist-my, 0) * 18px), 0)
+    rotate(calc(var(--archivist-my, 0) * -15deg));
+  animation: archivist-spin-slow 40s linear infinite, archivist-fade-b 16s ease-in-out infinite;
+}
+
+.archivist-shape--3 {
+  width: 260px;
+  height: 140px;
+  top: 38%;
+  left: -6%;
+  border-radius: 50%;
+  opacity: 0.12;
+  transform:
+    translate3d(calc(var(--archivist-mx, 0) * 14px), calc(var(--archivist-my, 0) * 20px), 0)
+    skewX(calc(var(--archivist-mx, 0) * 6deg));
+  animation: archivist-shape3-pulse 24s ease-in-out infinite;
+}
+
+.archivist-shape--4 {
+  width: min(55vw, 680px);
+  height: min(38vh, 400px);
+  bottom: -18%;
+  right: 10%;
+  border-radius: 60% 40% 50% 50% / 55% 45% 55% 45%;
+  opacity: 0.2;
+  transform:
+    translate3d(calc(var(--archivist-mx, 0) * -26px), calc(var(--archivist-my, 0) * 14px), 0);
+  animation: archivist-morph-c 28s ease-in-out infinite, archivist-fade-b 26s ease-in-out infinite;
+}
+
+@keyframes archivist-morph-a {
+  0%, 100% { border-radius: 37% 63% 42% 58% / 45% 38% 62% 55%; }
+  33% { border-radius: 63% 37% 58% 42% / 38% 62% 45% 55%; }
+  66% { border-radius: 44% 56% 51% 49% / 52% 48% 53% 47%; }
+}
+
+@keyframes archivist-shape3-pulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.24; }
+}
+
+@keyframes archivist-morph-c {
+  0%, 100% { border-radius: 60% 40% 50% 50% / 55% 45% 55% 45%; }
+  50% { border-radius: 42% 58% 48% 52% / 48% 52% 44% 56%; }
+}
+
+@keyframes archivist-spin-slow {
+  from { transform: translate3d(calc(var(--archivist-mx, 0) * -20px), calc(var(--archivist-my, 0) * 18px), 0) rotate(0deg); }
+  to { transform: translate3d(calc(var(--archivist-mx, 0) * -20px), calc(var(--archivist-my, 0) * 18px), 0) rotate(360deg); }
+}
+
+@keyframes archivist-fade-a {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.38; }
+}
+
+@keyframes archivist-fade-b {
+  0%, 100% { opacity: 0.08; }
+  40% { opacity: 0.28; }
+}

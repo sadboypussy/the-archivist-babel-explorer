@@ -1,0 +1,21 @@
+Feuille de route — coque bureau Qt 6 / PySide6 + QML (The Archivist)
+=====================================================================
+
+Objectif : même moteur Python (scan, LLM, Firestore, journal) ; interface native
+haute qualité (particules, typographie, animations) sans navigateur embarqué.
+
+Phases suggérées
+----------------
+1. Projet Qt minimal : fenêtre QML vide + thème sombre + lancement depuis un .bat
+   qui appelle le même Python que aujourd’hui.
+
+2. Écrans QML miroir du flux actuel : Seuil (pseudo), Balayage (bouton + état),
+   Registre (liste), Galerie (WebEngine optionnel ou lien système), Palmarès.
+
+3. Branchement : QProcess vers run_scanner.py + lecture JSON statut / journal
+   (comme Streamlit).
+
+4. Emballage Windows : PyInstaller ou cx_Freeze + dépendances Qt ; tests sur machine nue.
+
+Le dépôt reste la source de vérité pour la logique ; le dossier QML/Qt vivra à côté
+(ex. ``qt_shell/``) quand la phase 1 démarrera.

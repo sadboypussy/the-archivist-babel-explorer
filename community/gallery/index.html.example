@@ -4,23 +4,26 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Archivist — Galerie communautaire</title>
-  <style>
-    :root { color-scheme: dark; --bg: #121218; --fg: #e8e6e3; --muted: #8a8794; --accent: #c9a227; }
-    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); margin: 0; padding: 1.25rem; line-height: 1.45; }
-    h1 { font-weight: 600; font-size: 1.35rem; margin: 0 0 0.5rem; }
-    p.sub { color: var(--muted); font-size: 0.9rem; margin: 0 0 1.5rem; }
-    .card { border: 1px solid #2a2a34; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #1a1a22; }
-    .tier { color: var(--accent); font-weight: 600; font-size: 0.85rem; }
-    .coord { font-family: ui-monospace, monospace; font-size: 0.75rem; color: var(--muted); word-break: break-all; }
-    .frag { margin-top: 0.6rem; white-space: pre-wrap; font-size: 0.9rem; }
-    .err { color: #e07070; }
-  </style>
+  <link rel="stylesheet" href="archivist-gallery.css" />
 </head>
 <body>
-  <h1>Galerie communautaire</h1>
-  <p class="sub">Artefacts publiés depuis l’app The Archivist (Firestore). <strong>La console Firebase affiche souvent l’onglet « npm »</strong> : ignorez <code>npm install</code> et les <code>import</code> — pour cette page statique, <strong>copiez seulement l’objet JavaScript <code>firebaseConfig = { … }</code></strong> (les mêmes clés que sur l’écran) et collez-le dans le <code>const firebaseConfig</code> ci-dessous. Si la console propose un onglet <strong>CDN</strong>, vous pouvez aussi le lire : l’objet de config est le même. Ensuite enregistrez une copie sous le nom <code>index.html</code> à côté de ce fichier (voir <code>DEPLOY.txt</code>) : c’est ce fichier-là qui contient en général votre vraie config et n’est pas versionné dans Git.</p>
-  <div id="status">Chargement…</div>
-  <div id="list"></div>
+  <div class="archivist-ambient" aria-hidden="true">
+    <div class="archivist-shape archivist-shape--1"></div>
+    <div class="archivist-shape archivist-shape--2"></div>
+    <div class="archivist-shape archivist-shape--3"></div>
+    <div class="archivist-shape archivist-shape--4"></div>
+    <div class="archivist-grid"></div>
+  </div>
+  <div class="archivist-wrap">
+    <div class="archivist-lede">
+      <h1>Galerie communautaire</h1>
+      <p class="sub">Artefacts publiés depuis l’app The Archivist (Firestore). <strong>La console Firebase affiche souvent l’onglet « npm »</strong> : ignorez <code>npm install</code> et les <code>import</code> — pour cette page statique, <strong>copiez seulement l’objet JavaScript <code>firebaseConfig = { … }</code></strong> (les mêmes clés que sur l’écran) et collez-le dans le <code>const firebaseConfig</code> ci-dessous. Si la console propose un onglet <strong>CDN</strong>, vous pouvez aussi le lire : l’objet de config est le même. Ensuite enregistrez une copie sous le nom <code>index.html</code> à côté de ce fichier (voir <code>DEPLOY.txt</code>) : c’est ce fichier-là qui contient en général votre vraie config et n’est pas versionné dans Git.</p>
+    </div>
+    <div id="status">Chargement…</div>
+    <section class="archivist-lb" id="leaderboard" aria-label="Palmarès des archivistes"></section>
+    <h2 class="section-title">Trouvailles</h2>
+    <div id="list"></div>
+  </div>
 
   <!-- Firebase compat (pas de build npm) — versions vues sur https://firebase.google.com/docs/web/setup -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -38,12 +41,73 @@
       appId: "COLLEZ_VOTRE_appId"
     };
     const COLLECTION = "artefacts"; // identique à ARCHIVIST_FIRESTORE_COLLECTION si vous l’avez changée
+    const FETCH_LIMIT = 500; // palmarès + cartes (agrégation dans le navigateur)
 
     const statusEl = document.getElementById("status");
     const listEl = document.getElementById("list");
+    const lbEl = document.getElementById("leaderboard");
 
     function fail(msg) {
       statusEl.innerHTML = '<p class="err">' + msg + "</p>";
+      lbEl.innerHTML = "";
+      listEl.innerHTML = "";
+    }
+
+    function buildLeaderboard(rows) {
+      const m = new Map();
+      for (var i = 0; i < rows.length; i++) {
+        var r = rows[i];
+        var p = String(r.explorer_pseudo || "").trim();
+        if (!p) continue;
+        var pts = Number(r.archivist_points);
+        if (!isFinite(pts) || pts < 0) pts = 0;
+        if (!m.has(p)) m.set(p, { points: 0, count: 0 });
+        var o = m.get(p);
+        o.points += pts;
+        o.count += 1;
+      }
+      return Array.from(m.entries())
+        .map(function (e) {
+          return { pseudo: e[0], points: e[1].points, count: e[1].count };
+        })
+        .sort(function (a, b) {
+          if (b.points !== a.points) return b.points - a.points;
+          if (b.count !== a.count) return b.count - a.count;
+          return String(a.pseudo).localeCompare(String(b.pseudo));
+        });
+    }
+
+    function renderLeaderboard(entries) {
+      if (!entries.length) {
+        lbEl.innerHTML =
+          '<h2 class="lb-heading">Palmarès des archivistes</h2><p class="sub">Pas encore de points enregistrés sur les dépôts visibles.</p>';
+        return;
+      }
+      var maxShow = 40;
+      var slice = entries.slice(0, maxShow);
+      var ol =
+        '<h2 class="lb-heading">Palmarès des archivistes</h2><ol class="lb-list">' +
+        slice
+          .map(function (e, idx) {
+            var ptsStr = e.points.toLocaleString("fr-FR");
+            return (
+              "<li><div class=\"lb-line\"><span class=\"lb-rank\">" +
+              (idx + 1) +
+              ".</span><span class=\"lb-name\">" +
+              escapeHtml(e.pseudo) +
+              "</span><span class=\"lb-pts\">" +
+              ptsStr +
+              " pts</span></div><div class=\"lb-meta\">" +
+              e.count +
+              " trouvaille(s)</div></li>"
+            );
+          })
+          .join("") +
+        "</ol>";
+      if (entries.length > maxShow) {
+        ol += '<p class="sub">… et ' + (entries.length - maxShow) + " autre(s).</p>";
+      }
+      lbEl.innerHTML = ol;
     }
 
     if (!firebaseConfig.apiKey || firebaseConfig.apiKey.indexOf("COLLEZ") === 0) {
@@ -53,23 +117,37 @@
       const db = firebase.firestore();
 
       db.collection(COLLECTION)
-        .limit(120)
+        .limit(FETCH_LIMIT)
         .get()
         .then((snap) => {
           const rows = [];
           snap.forEach((doc) => rows.push({ id: doc.id, ...doc.data() }));
           rows.sort((a, b) => String(b.discovered_at || "").localeCompare(String(a.discovered_at || "")));
-          statusEl.innerHTML = "<p>" + rows.length + " entrée(s) affichée(s).</p>";
+          var lb = buildLeaderboard(rows);
+          renderLeaderboard(lb);
+          statusEl.innerHTML =
+            "<p>" +
+            rows.length +
+            " trouvaille(s) · palmarès calculé sur ces entrées (max " +
+            FETCH_LIMIT +
+            ").</p>";
           listEl.innerHTML = rows
             .map((r) => {
               const tier = (r.rarity_display_name || r.rarity_rank || "?") + "";
               const title = (r.archivist_title || "").trim() || "—";
+              var pts = Number(r.archivist_points);
+              var ptsBlock = "";
+              if (isFinite(pts) && pts > 0) {
+                ptsBlock = '<div class="card-pts">' + pts.toLocaleString("fr-FR") + " pts</div>";
+              }
               return (
                 '<article class="card"><div class="tier">' +
                 escapeHtml(tier) +
-                "</div><h2 style=\"margin:0.35rem 0 0;font-size:1rem;font-weight:500\">" +
+                "</div><h2>" +
                 escapeHtml(title) +
-                '</h2><div class="coord">' +
+                "</h2>" +
+                ptsBlock +
+                '<div class="coord">' +
                 escapeHtml(r.coordinates || "") +
                 '</div><div class="frag">' +
                 escapeHtml((r.fragment || "").slice(0, 3500)) +
@@ -91,5 +169,6 @@
         .replace(/"/g, "&quot;");
     }
   </script>
+  <script src="archivist-gallery.js"></script>
 </body>
 </html>

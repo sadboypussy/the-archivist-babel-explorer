@@ -55,7 +55,8 @@ Workflow GitHub **`.github/workflows/ci.yml`** : Windows, Python 3.11, `pip inst
 5. Optionnel : **`ARCHIVIST_FIRESTORE_COLLECTION`** (défaut `artefacts`).
 6. Règles Firestore d’exemple pour la **lecture galerie** : `config/firestore.rules.example` (les écritures Admin SDK contournent les règles ; la validation se fait côté Python dans `archivist_publish.py`).
 7. Dans **Streamlit → Mes découvertes**, bouton **Publier dans la galerie communautaire** par artefact.
-8. Onglet **Galerie en ligne** : ouverture de la page publique dans le navigateur + aperçu Firestore intégré (si JSON compte de service présent).
+8. Onglet **Galerie en ligne** : ouverture de la page publique dans le navigateur + aperçu Firestore intégré (si JSON compte de service présent). La **page galerie statique** inclut le **palmarès mondial** (même URL Netlify / Pages — pas de service séparé).
+9. Feuille de route coque bureau **Qt 6 / PySide6** : **`docs/qt-desktop-roadmap.txt`** (quand le passage hors Streamlit sera lancé).
 
 ## Pour les contributeurs (aujourd’hui)
 

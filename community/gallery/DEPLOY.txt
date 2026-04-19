@@ -13,6 +13,10 @@ Prérequis (déjà faits chez vous si la page locale fonctionne)
   (copie de index.html.example avec le bloc const firebaseConfig rempli.)
 • index.html est ignoré par Git dans community/gallery/ et docs/gallery/ :
   évite d’enregistrer la config Web dans l’historique par erreur.
+• **Palmarès mondial** : intégré **dans la même page** galerie (section au-dessus des
+  cartes) — agrégation dans le navigateur à partir des champs ``explorer_pseudo`` et
+  ``archivist_points`` sur chaque document (pas de second site à maintenir).
+  Republiez les anciennes entrées si elles n’ont pas encore ``archivist_points``.
 
 
 4.1 — Netlify Drop (le plus simple, sans Git)
@@ -27,7 +31,8 @@ But : obtenir une adresse du type https://un-nom.netlify.app
    …\Babel explorer\community\gallery\
 
 3. Glissez-déposez **tout le dossier « gallery »** (ou son contenu : au minimum
-   index.html + éventuellement ce fichier DEPLOY.txt) dans la zone prévue sur Netlify.
+   index.html, **archivist-gallery.css**, **archivist-gallery.js**, + éventuellement ce fichier DEPLOY.txt)
+   dans la zone prévue sur Netlify.
 
 4. Attendez la fin du traitement : Netlify affiche une **URL** en vert.
    Cliquez dessus : vous devez voir la même galerie qu’en local (liste ou « 0 entrée »).
