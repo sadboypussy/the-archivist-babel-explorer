@@ -22,6 +22,8 @@ import os
 from pathlib import Path
 from typing import Any, Final, Mapping
 
+from archivist_contribution import points_for_artefact
+
 _REPO_ROOT = Path(__file__).resolve().parent
 _DEFAULT_SERVICE_ACCOUNT_JSON = _REPO_ROOT / "config" / "firebase-service-account.json"
 
@@ -140,6 +142,7 @@ def sanitize_for_gallery(record: Mapping[str, Any]) -> dict[str, Any]:
     }
     if record.get("mission_keyword_hits") is not None:
         out["mission_keyword_hits"] = record.get("mission_keyword_hits")
+    out["archivist_points"] = int(points_for_artefact(record))
     return out
 
 

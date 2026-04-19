@@ -42,6 +42,8 @@ class TestSanitize(unittest.TestCase):
         self.assertLessEqual(len(out["fragment"]), 12_000)
         self.assertLessEqual(len(out["archivist_title"]), 500)
         self.assertEqual(out["mission_keyword_score"], 42)
+        self.assertIn("archivist_points", out)
+        self.assertGreater(int(out["archivist_points"]), 0)
 
 
 class TestCredentialsPath(unittest.TestCase):

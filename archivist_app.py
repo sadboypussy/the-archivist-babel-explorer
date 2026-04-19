@@ -18,6 +18,7 @@ if str(_ROOT) not in sys.path:
 
 import streamlit as st
 
+from archivist_contribution import aggregate_scores_by_pseudo, points_for_artefact
 from archivist_log import read_log
 from archivist_paths import DEFAULT_GGUF_PATH
 from archivist_publish import (
@@ -38,6 +39,7 @@ _NAV: dict[str, str] = {
     "briefing": "Seuil",
     "scan": "Balayage",
     "discoveries": "Registre",
+    "leaderboard": "Palmarès",
     "gallery": "Galerie",
     "settings": "Coulisses",
 }
@@ -364,6 +366,8 @@ def _view_discoveries() -> None:
         title = art.get("archivist_title") or "—"
         label = f"{r.get('display_name', '?')} · {title}"
         with st.expander(label):
+            pts = points_for_artefact(art)
+            st.caption(f"Contribution : **{pts}** pts")
             st.markdown(
                 f'<p style="margin:0 0 0.5rem 0"><span style="color:{color};font-weight:700">'
                 f"{r.get('display_name', '?')}</span></p>",
@@ -414,6 +418,36 @@ def _view_discoveries() -> None:
                 )
 
 
+def _view_leaderboard() -> None:
+    st.markdown(
+        "Les **points d’archiviste** récompensent la rareté des fragments, la pertinence "
+        "pour l’histoire, et la richesse des indices — tout est calculé à partir de votre registre local."
+    )
+    rows = read_log(_DEFAULT_LOG)
+    agg = aggregate_scores_by_pseudo(rows)
+    if not agg:
+        st.info("Encore aucun explorateur dans le registre : lancez un balayage pour entrer au palmarès.")
+        return
+
+    me = (st.session_state.explorer_pseudo or "").strip()
+    my_row = next((x for x in agg if x["pseudo"] == me), None)
+    if my_row:
+        st.metric("Votre contribution", f"{my_row['total_points']:,} pts", delta=f"{my_row['artefact_count']} trouvailles")
+    else:
+        st.caption("Enregistrez votre nom au **Seuil** pour voir votre rang ici.")
+
+    st.divider()
+    st.markdown("**Classement**")
+    for i, row in enumerate(agg[:30], start=1):
+        mark = " · vous" if me and row["pseudo"] == me else ""
+        st.markdown(
+            f"{i}. **{row['pseudo']}** — {row['total_points']:,} pts "
+            f"({row['artefact_count']} trouvailles){mark}"
+        )
+    if len(agg) > 30:
+        st.caption(f"… et {len(agg) - 30} autre(s) explorateurice(s).")
+
+
 def _view_gallery() -> None:
     st.markdown("**Salon public** — la même collection que sur le site, vue depuis votre poste.")
     url = public_gallery_url()
@@ -440,7 +474,10 @@ def _view_gallery() -> None:
     for r in rows:
         tier = (r.get("rarity_display_name") or r.get("rarity_rank") or "?") + ""
         title = (str(r.get("archivist_title") or "")).strip() or "—"
+        pts = int(r.get("archivist_points") or 0)
         with st.expander(f"{tier} — {title}", expanded=False):
+            if pts:
+                st.caption(f"Contribution : {pts} pts")
             st.caption(str(r.get("coordinates") or ""))
             st.caption(f"{r.get('discovered_at', '—')} · {r.get('explorer_pseudo', '—')}")
             frag = str(r.get("fragment") or "")
@@ -492,6 +529,8 @@ def main() -> None:
         _view_scanner()
     elif page == "discoveries":
         _view_discoveries()
+    elif page == "leaderboard":
+        _view_leaderboard()
     elif page == "gallery":
         _view_gallery()
     else:
