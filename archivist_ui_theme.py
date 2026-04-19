@@ -124,11 +124,77 @@ h1 {
   margin-bottom: 0.25rem !important;
 }
 
+/* Sous-titres d’onglets (ex. Galerie en ligne) */
+h3 {
+  font-size: 1.35rem !important;
+  margin-top: 0.15rem !important;
+  margin-bottom: 0.5rem !important;
+  font-weight: 400 !important;
+}
+
+/* Infos / avertissements : panneau verre (Galerie, découvertes) */
+div[data-testid="stAlert"] {
+  background: rgba(255, 252, 248, 0.05) !important;
+  backdrop-filter: blur(16px) saturate(1.1) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(1.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: 14px !important;
+}
+
+div[data-testid="stAlert"] > div {
+  color: var(--archivist-fg) !important;
+}
+
+div[data-testid="stAlert"] p,
+div[data-testid="stAlert"] li {
+  color: rgba(238, 235, 230, 0.92) !important;
+}
+
+/* Séparateurs */
+hr {
+  border: none !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  margin: 1.75rem 0 !important;
+}
+
+/* Bouton-lien « Ouvrir la galerie… » (st.link_button) */
+a[data-testid="stLinkButton"] {
+  background: linear-gradient(165deg, #b8932a 0%, #8e6f1f 100%) !important;
+  color: #f8f4ea !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 0.45rem 1rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.03em !important;
+  text-decoration: none !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+}
+
+a[data-testid="stLinkButton"]:hover {
+  filter: brightness(1.06) !important;
+}
+
 .block-container {
   padding-top: 2rem !important;
   padding-bottom: 4rem !important;
   position: relative;
   z-index: 2;
+}
+
+/* Barre latérale : navigation principale (remplace les onglets) */
+[data-testid="stSidebar"] {
+  background: rgba(8, 8, 12, 0.78) !important;
+  backdrop-filter: blur(22px) saturate(1.15) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(1.15) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+[data-testid="stSidebar"] [data-testid="stMarkdown"] h1 {
+  font-size: 1.45rem !important;
+  margin-bottom: 0.15rem !important;
+}
+[data-testid="stSidebar"] [data-testid="stRadio"] label {
+  font-size: 0.95rem !important;
+  padding: 0.35rem 0 !important;
 }
 
 /* Caption sous le titre */
