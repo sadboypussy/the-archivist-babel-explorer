@@ -10,8 +10,9 @@ Credentials (first match wins):
 Do **not** commit credential files. Firestore rules must constrain writes (see
 ``config/firestore.rules.example``).
 
-Gallery HTML (GitHub Pages) can keep using the JS SDK with a public config; this
-module is for **writes** from the Python / Streamlit app only.
+Gallery HTML (Netlify / GitHub Pages) uses the JS SDK with a public config; this
+module handles **writes** from the Python app and **reads** for the in-app gallery
+feed (Admin SDK, same collection).
 """
 
 from __future__ import annotations
@@ -51,6 +52,66 @@ def gallery_collection_id() -> str:
     return os.environ.get("ARCHIVIST_FIRESTORE_COLLECTION", "artefacts").strip() or "artefacts"
 
 
+def public_gallery_url() -> str:
+    """
+    Public web gallery (static HTML). Override with ``ARCHIVIST_GALLERY_PUBLIC_URL``;
+    else first ``https://`` line in ``community/gallery/PUBLIC_GALLERY.txt``;
+    else a safe default.
+    """
+    env = os.environ.get("ARCHIVIST_GALLERY_PUBLIC_URL", "").strip()
+    if env:
+        return env
+    path = _REPO_ROOT / "community" / "gallery" / "PUBLIC_GALLERY.txt"
+    if path.is_file():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            s = line.strip()
+            if s.startswith("https://"):
+                return s
+    return "https://venerable-dango-f3a334.netlify.app/"
+
+
+def _get_firestore_client() -> tuple[Any | None, str | None]:
+    """Returns ``(client, None)`` or ``(None, error_message)``."""
+    cp = credentials_path()
+    if cp is None:
+        return None, (
+            "JSON compte de service absent — placez **config/firebase-service-account.json** "
+            "ou définissez **ARCHIVIST_FIREBASE_CREDENTIALS**."
+        )
+    try:
+        import firebase_admin
+        from firebase_admin import credentials, firestore
+    except ImportError:
+        return None, "Installez les deps galerie : pip install -r requirements-app.txt (firebase-admin)."
+    try:
+        if not firebase_admin._apps:
+            firebase_admin.initialize_app(credentials.Certificate(str(cp)))
+        return firestore.client(), None
+    except Exception as e:
+        return None, str(e)
+
+
+def fetch_gallery_artefacts(*, limit: int = 120) -> dict[str, Any]:
+    """
+    Read published rows from Firestore (same collection as the public HTML gallery).
+
+    Returns ``{"ok": bool, "error": str | None, "rows": list[dict]}``.
+    """
+    db, err = _get_firestore_client()
+    if err:
+        return {"ok": False, "error": err, "rows": []}
+    try:
+        col = db.collection(gallery_collection_id())
+        snap = col.limit(limit).get()
+        rows: list[dict[str, Any]] = []
+        for doc in snap:
+            rows.append({"id": doc.id, **doc.to_dict()})
+        rows.sort(key=lambda r: str(r.get("discovered_at") or ""), reverse=True)
+        return {"ok": True, "error": None, "rows": rows}
+    except Exception as e:
+        return {"ok": False, "error": str(e), "rows": []}
+
+
 def stable_document_id(record: Mapping[str, Any]) -> str:
     """Deterministic id from coordinates + discovery time (idempotent re-publish)."""
     coord = str(record.get("coordinates", ""))[: _MAX_COORD]
@@ -86,23 +147,9 @@ def publish_artefact_to_firestore(record: Mapping[str, Any]) -> dict[str, Any]:
     """
     Write one artefact to Firestore. Returns ``{"ok": bool, "doc_id": str|None, "error": str|None}``.
     """
-    cp = credentials_path()
-    if cp is None:
-        return {
-            "ok": False,
-            "doc_id": None,
-            "error": "Définissez ARCHIVIST_FIREBASE_CREDENTIALS (chemin vers JSON compte de service).",
-        }
-
-    try:
-        import firebase_admin
-        from firebase_admin import credentials, firestore
-    except ImportError:
-        return {
-            "ok": False,
-            "doc_id": None,
-            "error": "Installez les deps galerie : pip install -r requirements-app.txt (firebase-admin).",
-        }
+    db, err = _get_firestore_client()
+    if err:
+        return {"ok": False, "doc_id": None, "error": err}
 
     payload = sanitize_for_gallery(record)
     if not payload["coordinates"]:
@@ -111,10 +158,6 @@ def publish_artefact_to_firestore(record: Mapping[str, Any]) -> dict[str, Any]:
     doc_id = stable_document_id(record)
 
     try:
-        if not firebase_admin._apps:
-            cred = credentials.Certificate(str(cp))
-            firebase_admin.initialize_app(cred)
-        db = firestore.client()
         col = db.collection(gallery_collection_id())
         col.document(doc_id).set(payload, merge=True)
     except Exception as e:

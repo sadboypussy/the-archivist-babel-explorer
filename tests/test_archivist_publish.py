@@ -11,7 +11,13 @@ ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from archivist_publish import credentials_path, gallery_collection_id, sanitize_for_gallery, stable_document_id
+from archivist_publish import (
+    credentials_path,
+    gallery_collection_id,
+    public_gallery_url,
+    sanitize_for_gallery,
+    stable_document_id,
+)
 
 
 class TestSanitize(unittest.TestCase):
@@ -50,6 +56,19 @@ class TestCredentialsPath(unittest.TestCase):
                 os.environ.pop("ARCHIVIST_FIREBASE_CREDENTIALS", None)
             else:
                 os.environ["ARCHIVIST_FIREBASE_CREDENTIALS"] = old
+
+
+class TestPublicGalleryUrl(unittest.TestCase):
+    def test_env_overrides_file(self) -> None:
+        old = os.environ.pop("ARCHIVIST_GALLERY_PUBLIC_URL", None)
+        try:
+            os.environ["ARCHIVIST_GALLERY_PUBLIC_URL"] = "https://example.test/gallery/"
+            self.assertEqual(public_gallery_url(), "https://example.test/gallery/")
+        finally:
+            if old is None:
+                os.environ.pop("ARCHIVIST_GALLERY_PUBLIC_URL", None)
+            else:
+                os.environ["ARCHIVIST_GALLERY_PUBLIC_URL"] = old
 
 
 class TestCollectionEnv(unittest.TestCase):

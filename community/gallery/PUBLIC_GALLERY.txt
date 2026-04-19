@@ -16,3 +16,6 @@ GitHub Pages reste utile si Netlify change ou pour ceux qui ne veulent qu’un
 hébergeur lié au dépôt.
 
 Si tu changes d’URL Netlify ou de nom de dépôt, mets ce fichier à jour.
+
+L’application Streamlit lit la première URL « https://… » de ce fichier pour le bouton
+« Galerie en ligne » (surcharge possible avec la variable ARCHIVIST_GALLERY_PUBLIC_URL).

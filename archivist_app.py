@@ -25,7 +25,14 @@ import streamlit as st
 
 from archivist_log import read_log
 from archivist_paths import DEFAULT_GGUF_PATH
-from archivist_publish import is_community_configured, publish_artefact_to_firestore, stable_document_id
+from archivist_publish import (
+    fetch_gallery_artefacts,
+    gallery_collection_id,
+    is_community_configured,
+    public_gallery_url,
+    publish_artefact_to_firestore,
+    stable_document_id,
+)
 from archivist_ui_theme import inject_archivist_ui
 
 _PSEUDO_FILE = _ROOT / ".explorer_pseudo.txt"
@@ -373,6 +380,46 @@ def _tab_discoveries() -> None:
                 )
 
 
+def _tab_gallery_online() -> None:
+    """Public gallery URL + optional Firestore feed (same data as the static site)."""
+    st.subheader("Galerie communautaire en ligne")
+    st.caption(
+        "Ouvrez la page publique dans votre navigateur, ou consultez ci‑dessous le flux "
+        "Firestore (identique au site) lorsque le JSON compte de service est configuré."
+    )
+    url = public_gallery_url()
+    if hasattr(st, "link_button"):
+        st.link_button("Ouvrir la galerie publique dans le navigateur", url=url, type="primary")
+    else:
+        st.markdown(f"[Ouvrir la galerie publique dans le navigateur]({url})")
+    st.caption(f"URL : `{url}` — modifiable via **ARCHIVIST_GALLERY_PUBLIC_URL** ou `community/gallery/PUBLIC_GALLERY.txt`.")
+
+    st.divider()
+    st.write("**Aperçu intégré (Firestore)**")
+    if not is_community_configured():
+        st.info(
+            "Pour lister ici les artefacts publiés, placez le JSON compte de service sous "
+            "**config/firebase-service-account.json** (voir **config/firebase-service-account.README.txt**). "
+            "Sans cela, la page publique ci‑dessus fonctionne quand même pour tout le monde."
+        )
+        return
+
+    res = fetch_gallery_artefacts(limit=120)
+    if not res.get("ok"):
+        st.error(res.get("error") or "Lecture Firestore impossible.")
+        return
+    rows = res.get("rows") or []
+    st.caption(f"{len(rows)} entrée(s) — collection « {gallery_collection_id()} ».")
+    for r in rows:
+        tier = (r.get("rarity_display_name") or r.get("rarity_rank") or "?") + ""
+        title = (str(r.get("archivist_title") or "")).strip() or "—"
+        with st.expander(f"{tier} — {title}", expanded=False):
+            st.caption(str(r.get("coordinates") or ""))
+            st.caption(f"Découvert : {r.get('discovered_at', '—')} · {r.get('explorer_pseudo', '—')}")
+            frag = str(r.get("fragment") or "")
+            st.text(frag[:3500] + ("…" if len(frag) > 3500 else ""))
+
+
 def _tab_system() -> None:
     st.caption("Vérifications techniques (équivalent `scripts/first_run.py`).")
     if st.button("Analyser l’environnement"):
@@ -394,7 +441,9 @@ def main() -> None:
     st.title("The Archivist")
     st.caption("Babel Investigation Engine — interface locale")
 
-    t1, t2, t3, t4 = st.tabs(["Briefing", "Scanner", "Mes découvertes", "Système"])
+    t1, t2, t3, t4, t5 = st.tabs(
+        ["Briefing", "Scanner", "Mes découvertes", "Galerie en ligne", "Système"]
+    )
     with t1:
         _tab_briefing()
     with t2:
@@ -402,6 +451,8 @@ def main() -> None:
     with t3:
         _tab_discoveries()
     with t4:
+        _tab_gallery_online()
+    with t5:
         _tab_system()
 
 
